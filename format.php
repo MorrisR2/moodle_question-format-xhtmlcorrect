@@ -47,15 +47,15 @@ class qformat_xhtmlcorrect extends qformat_default {
 
     protected function writequestion($question) {
         global $OUTPUT;
-        // turns question into string
-        // question reflects database fields for general question and specific to type
+        // Turns question into string.
+        // Question reflects database fields for general question and specific to type.
 
-        // if a category switch, just ignore
+        // If a category switch, just ignore.
         if ($question->qtype=='category') {
             return '';
         }
 
-        // initial string;
+        // Initial string.
         $expout = "";
         $id = $question->id;
 
@@ -63,18 +63,27 @@ class qformat_xhtmlcorrect extends qformat_default {
         if ($question->hidden) {
             $ishidden = 'hiddenquestion';
         }
-        // add comment and div tags
+
+
+        // Add comment and div tags.
+        $expout .= "<!-- question: {$id}  name: {$question->name} -->\n";
         $expout .= "<div class=\"question $ishidden\">\n";
 
-        // add header
-        $expout .= "<h3>$question->name</h3>\n";
+
+        // Add header.
+        $expout .= "<h3>{$question->name}</h3>\n";
         $defaultmark = preg_replace('/[0|\.]*$/', '', 'Default value: ' . $question->defaultmark);
         $expout .= '<p class="">'.$defaultmark.'</p>';
-        // Format and add the question text
-        $expout .= '<p class="questiontext">' . format_text($question->questiontext,
-                $question->questiontextformat) . "</p>\n";
 
-        // selection depends on question type
+        // Format and add the question text.
+        $text = question_rewrite_question_preview_urls($question->questiontext, $question->id,
+                $question->contextid, 'question', 'questiontext', $question->id,
+                $question->contextid, 'qformat_xhtml');
+        $expout .= '<p class="questiontext">' . format_text($text,
+                $question->questiontextformat, array('noclean' => true)) . "</p>\n";
+
+
+        // Selection depends on question type.
         switch($question->qtype) {
         case TRUEFALSE:
         case 'truefalse':
@@ -124,21 +133,21 @@ class qformat_xhtmlcorrect extends qformat_default {
         case 'match':
             $expout .= "<ul class=\"match\">\n";
 
-            // build answer list
+            // Build answer list.
             $ans_list = array();
             foreach($question->options->subquestions as $subquestion) {
                $ans_list[] = $this->repchar( $subquestion->answertext );
             }
-            shuffle( $ans_list ); // random display order
+            shuffle( $ans_list ); // Random display order.
 
-            // build drop down for answers
+            // Build drop down for answers.
             $dropdown = "<select name=\"quest_$id\">\n";
             foreach($ans_list as $ans) {
                 $dropdown .= "<option value=\"" . s($ans) . "\">" . s($ans) . "</option>\n";
             }
             $dropdown .= "</select>\n";
 
-            // finally display
+            // Finally display.
             foreach($question->options->subquestions as $subquestion) {
               $quest_text = $this->repchar( $subquestion->questiontext );
               $expout .= "  <li>$quest_text</li>\n";
@@ -156,18 +165,18 @@ class qformat_xhtmlcorrect extends qformat_default {
         default:
             echo $OUTPUT->notification("No handler for qtype $question->qtype" );
         }
-        // close off div
+        // Close off div.
         $expout .= "</div>\n\n\n";
         return $expout;
     }
 
 
     protected function presave_process($content) {
-        // override method to allow us to add xhtml headers and footers
+        // Override method to allow us to add xhtml headers and footers.
 
         global $CFG;
 
-        // get css bit
+        // Get css bit.
         $css_lines = file( "$CFG->dirroot/question/format/xhtmlcorrect/xhtml.css" );
         $css = implode( ' ',$css_lines );
 
