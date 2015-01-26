@@ -1,0 +1,45 @@
+<style type="text/css">
+  body {
+    font-family: Verdana, Helvetica, Sans-Serif;
+    background-color: #fff;
+    color: #000;
+  }
+
+  .question {
+    border: 1px solid #ddd;
+    margin: 5px;
+    padding: 3px;
+    }
+
+  .question h3 {
+    font-weight: normal;
+    font-size: 125%;
+  }
+
+  .correctness_correct {
+    font-weight: 700;
+    list-style-type: disc;
+  }
+
+  .correctness_incorrect {
+    font-weight: 200;
+    list-style-type: circle;
+  }
+
+  .correctness_partial {
+    font-weight: 500;
+    list-style-type: square;
+  }
+
+ul.captioned[title]:before {
+ content: attr(title);
+ display: block;
+}
+
+.hiddenquestion {
+	-webkit-opacity: 0.6;
+	-moz-opacity: 0.6;
+	filter:alpha(opacity=60);
+    opacity: 0.6;
+}
+</style>
